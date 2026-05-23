@@ -1,24 +1,12 @@
 // js/app.js
 // Load student data and handle search functionality
 
-let studentData = [];
-
-// Load data on window load
-window.addEventListener('load', async () => {
-  await loadStudentData();
-});
-
-async function loadStudentData() {
-  try {
-    const response = await fetch('./data/database.json');
-    if (!response.ok) {
-      throw new Error('Failed to load student data');
-    }
-    studentData = await response.json();
-  } catch (err) {
-    console.error(err);
-    showError('Gagal Memuat Data', 'Tidak dapat memuat data siswa. Silakan muat ulang halaman.');
-  }
+// Helper to compute SHA-256 hash of a string
+async function sha256(message) {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
 // Search handler attached to form submission
@@ -32,33 +20,53 @@ async function handleSearch(event) {
     return;
   }
 
-  const student = studentData.find(s => s.no_peserta === noPeserta);
+  // Disable search button to prevent double-click
+  const searchBtn = document.getElementById('btn-search');
+  if (searchBtn) searchBtn.disabled = true;
 
-  if (!student) {
-    showError('Data Tidak Ditemukan', 'Nomor peserta yang Anda masukkan tidak terdaftar. Silakan periksa kembali.');
-    return;
+  try {
+    // Hash the participant number
+    const hash = await sha256(noPeserta);
+
+    // Fetch the individual student file
+    const response = await fetch(`./data/${hash}.json`);
+    if (!response.ok) {
+      if (response.status === 404) {
+        showError('Data Tidak Ditemukan', 'Nomor peserta yang Anda masukkan tidak terdaftar. Silakan periksa kembali.');
+      } else {
+        showError('Terjadi Kesalahan', 'Gagal mengambil data dari server. Silakan coba lagi nanti.');
+      }
+      return;
+    }
+
+    const student = await response.json();
+
+    // Populate modal fields
+    document.getElementById('modal-no-peserta').textContent = student.no_peserta;
+    document.getElementById('modal-nisn').textContent = student.nisn;
+    document.getElementById('modal-nama').textContent = student.nama.toUpperCase();
+    document.getElementById('modal-jk').textContent = student.jk === 'L' ? 'Laki-laki' : 'Perempuan';
+    document.getElementById('modal-keterangan').textContent = student.keterangan;
+    document.getElementById('modal-rata').textContent = student.rata_rata.toFixed(1);
+
+    const statusBanner = document.getElementById('status-banner');
+
+    if (student.keterangan === 'LULUS') {
+      statusBanner.className = 'status-banner lulus';
+      statusBanner.innerHTML = '<i class="fas fa-check-circle"></i> SELAMAT! ANDA DINYATAKAN LULUS';
+    } else {
+      statusBanner.className = 'status-banner tidak-lulus';
+      statusBanner.innerHTML = '<i class="fas fa-times-circle"></i> MAAF, ANDA DINYATAKAN TIDAK LULUS';
+    }
+
+    // Show modal
+    document.getElementById('result-modal').classList.add('active');
+  } catch (err) {
+    console.error(err);
+    showError('Kesalahan Sistem', 'Terjadi kesalahan saat memproses data.');
+  } finally {
+    if (searchBtn) searchBtn.disabled = false;
   }
-
-  // Populate modal fields
-  document.getElementById('modal-no-peserta').textContent = student.no_peserta;
-  document.getElementById('modal-nisn').textContent = student.nisn;
-  document.getElementById('modal-nama').textContent = student.nama.toUpperCase();
-  document.getElementById('modal-jk').textContent = student.jk === 'L' ? 'Laki-laki' : 'Perempuan';
-  document.getElementById('modal-keterangan').textContent = student.keterangan;
-  document.getElementById('modal-rata').textContent = student.rata_rata.toFixed(1);
-
-  const statusBanner = document.getElementById('status-banner');
-
-  if (student.keterangan === 'LULUS') {
-    statusBanner.className = 'status-banner lulus';
-    statusBanner.innerHTML = '<i class="fas fa-check-circle"></i> SELAMAT! ANDA DINYATAKAN LULUS';
-  } else {
-    statusBanner.className = 'status-banner tidak-lulus';
-    statusBanner.innerHTML = '<i class="fas fa-times-circle"></i> MAAF, ANDA DINYATAKAN TIDAK LULUS';
-  }
-
-  // Show modal
-  document.getElementById('result-modal').classList.add('active');
 }
 
 function closeModal() {

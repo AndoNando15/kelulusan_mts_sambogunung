@@ -629,16 +629,43 @@ body::before {
     padding: 28px 20px;
   }
 
+  .school-logo {
+    max-height: 100px;
+    max-width: 100%;
+  }
+
+  .countdown-box {
+    padding: 20px 16px;
+    width: 100%;
+    max-width: 360px;
+    box-sizing: border-box;
+  }
+
+  .countdown-label {
+    font-size: 14px;
+    margin-bottom: 16px;
+    line-height: 1.4;
+  }
+
+  .countdown-grid {
+    gap: 6px;
+  }
+
   .countdown-number {
-    font-size: 36px;
+    font-size: 32px;
   }
 
   .countdown-item {
-    min-width: 55px;
+    min-width: 50px;
   }
 
   .countdown-separator {
-    font-size: 30px;
+    font-size: 24px;
+  }
+
+  .countdown-unit {
+    font-size: 11px;
+    margin-top: 4px;
   }
 
   .search-form {
@@ -649,8 +676,30 @@ body::before {
     justify-content: center;
   }
 
+  .modal-overlay {
+    padding: 10px;
+  }
+
   .modal-container {
-    max-height: 85vh;
+    max-height: 90vh;
+  }
+
+  .modal-body {
+    padding: 16px;
+  }
+
+  .student-details td {
+    padding: 8px 4px;
+    font-size: 13px;
+  }
+
+  .student-details td:first-child {
+    width: 115px;
+  }
+
+  .avg-score-card {
+    padding: 16px;
+    margin-bottom: 16px;
   }
 
   .avg-score-value {
@@ -663,6 +712,51 @@ body::before {
 
   .btn {
     justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 24px 16px;
+  }
+
+  .school-logo {
+    max-height: 80px;
+  }
+
+  .countdown-box {
+    padding: 16px 8px;
+    max-width: 290px;
+  }
+
+  .countdown-label {
+    font-size: 12px;
+    margin-bottom: 12px;
+  }
+
+  .countdown-separator {
+    display: none;
+  }
+
+  .countdown-grid {
+    gap: 8px;
+    justify-content: space-around;
+  }
+
+  .countdown-item {
+    min-width: 52px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-sm);
+    padding: 6px 2px;
+  }
+
+  .countdown-number {
+    font-size: 24px;
+  }
+
+  .countdown-unit {
+    font-size: 9px;
+    color: var(--gray-400);
   }
 }
 
