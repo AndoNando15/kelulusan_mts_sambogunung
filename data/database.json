@@ -1,0 +1,26 @@
+[
+  {
+    "no_peserta": "001",
+    "nisn": "1234567890",
+    "nama": "Ahmad Fauzi",
+    "jk": "L",
+    "keterangan": "LULUS",
+    "rata_rata": 85.5
+  },
+  {
+    "no_peserta": "002",
+    "nisn": "0987654321",
+    "nama": "Siti Nurhaliza",
+    "jk": "P",
+    "keterangan": "TIDAK LULUS",
+    "rata_rata": 68.2
+  },
+  {
+    "no_peserta": "003",
+    "nisn": "1122334455",
+    "nama": "Budi Santoso",
+    "jk": "L",
+    "keterangan": "LULUS",
+    "rata_rata": 91.0
+  }
+]
