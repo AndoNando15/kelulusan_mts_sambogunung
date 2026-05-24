@@ -1,162 +1,68 @@
 <!DOCTYPE html>
-<html lang="id">
-
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pengumuman Kelulusan - MTs YKUI Sambogunung</title>
-  <meta name="description"
-    content="Cek pengumuman kelulusan siswa MTs YKUI Sambogunung Tahun Ajaran 2025/2026. Masukkan Nomor Peserta Ujian untuk melihat hasil kelulusan." />
-
-  <!-- Font Awesome CDN -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-  <!-- Custom Styles -->
-  <link rel="stylesheet" href="./css/style.css" />
+  <title>Admin Dashboard – Kelulusan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    body {font-family: 'Inter', sans-serif; background: linear-gradient(135deg,#0f0c29,#302b63,#24243e); min-height:100vh; color:#fff; display:flex; flex-direction:column; align-items:center; padding:2rem;}
+    .card {background:rgba(255,255,255,0.08); backdrop-filter:blur(12px); border-radius:12px; padding:1.5rem; width:100%; max-width:1000px; box-shadow:0 8px 32px 0 rgba(31,38,135,0.37);}
+    h1{font-size:2rem;margin-bottom:1rem;}
+    table{width:100%;border-collapse:collapse;}
+    th,td{padding:0.75rem;text-align:left;}
+    th{background:rgba(255,255,255,0.12);}
+    tr:nth-child(even){background:rgba(255,255,255,0.04);}
+    button{background:#6c63ff;border:none;border-radius:6px;color:#fff;padding:0.5rem 1rem;cursor:pointer;transition:background .2s;}
+    button:hover{background:#5a54d1;}
+    .modal{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);opacity:0;visibility:hidden;transition:opacity .3s;}
+    .modal.active{opacity:1;visibility:visible;}
+    .modal-content{background:rgba(255,255,255,0.12);backdrop-filter:blur(10px);border-radius:10px;padding:2rem;width:90%;max-width:500px;color:#fff;}
+    .form-group{margin-bottom:1rem;}
+    .form-group label{display:block;margin-bottom:0.3rem;}
+    .form-group input,.form-group select{width:100%;padding:0.5rem;border:none;border-radius:4px;}
+  </style>
 </head>
-
 <body>
+  <section class="card">
+    <h1>📊 Admin Dashboard – Kelulusan</h1>
+    <button id="btnAdd">Tambah Siswa</button>
+    <table>
+      <thead>
+        <tr>
+          <th>No Peserta</th>
+          <th>NISN</th>
+          <th>Nama</th>
+          <th>JK</th>
+          <th>Keterangan</th>
+          <th>Rata‑Rata</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="tblBody"></tbody>
+    </table>
+  </section>
 
-
-
-  <!-- ========== Main Content ========== -->
-  <main class="main-content">
-    <div class="card">
-      <!-- School Logo -->
-      <div class="logo-container">
-        <img src="logo.png" alt="Logo MTs YKUI Sambogunung" class="school-logo" />
-      </div>
-
-      <h2 class="section-title">Cari Status Kelulusan Anda</h2>
-
-      <!-- Countdown Section -->
-      <section id="countdown-section" class="countdown-section countdown-wrapper">
-        <div class="countdown-box">
-          <p class="countdown-label">Pengumuman Kelulusan<br />Dibuka Dalam:</p>
-          <div class="countdown-grid">
-            <div class="countdown-item">
-              <span class="countdown-number" id="days">00</span>
-              <span class="countdown-unit">Hari</span>
-            </div>
-            <span class="countdown-separator">|</span>
-            <div class="countdown-item">
-              <span class="countdown-number" id="hours">00</span>
-              <span class="countdown-unit">Jam</span>
-            </div>
-            <span class="countdown-separator">|</span>
-            <div class="countdown-item">
-              <span class="countdown-number" id="minutes">00</span>
-              <span class="countdown-unit">Menit</span>
-            </div>
-            <span class="countdown-separator">|</span>
-            <div class="countdown-item">
-              <span class="countdown-number" id="seconds">00</span>
-              <span class="countdown-unit">Detik</span>
-            </div>
-          </div>
-        </div>
-        <p class="countdown-notice">
-          Formulir pengecekan nomor peserta akan muncul setelah hitungan mundur berakhir. Pastikan Anda memiliki Nomor
-          Peserta Ujian Anda.
-        </p>
-      </section>
-
-      <!-- Search Section (hidden initially) -->
-      <section id="search-section" class="search-section hidden">
-        <p class="search-label">Masukkan Nomor Peserta Ujian Anda untuk melihat hasil kelulusan</p>
-        <form id="search-form" class="search-form" onsubmit="handleSearch(event)">
-          <input type="text" id="search-input" class="search-input" placeholder="Contoh: 001" autocomplete="off" />
-          <button type="submit" class="search-btn" id="btn-search">
-            <i class="fas fa-search"></i> Cari
-          </button>
-        </form>
-      </section>
-    </div>
-  </main>
-
-  <!-- ========== Result Modal ========== -->
-  <div id="result-modal" class="modal-overlay">
-    <div class="modal-container">
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <span class="modal-header-title">Hasil Kelulusan Siswa</span>
-        <button class="modal-close-btn" onclick="closeModal()" aria-label="Tutup">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-
-      <!-- Modal Body -->
-      <div class="modal-body">
-        <!-- Status Banner -->
-        <div id="status-banner" class="status-banner"></div>
-
-        <!-- Student Details -->
-        <table class="student-details">
-          <tbody>
-            <tr>
-              <td>1. No. Peserta</td>
-              <td>:</td>
-              <td id="modal-no-peserta"></td>
-            </tr>
-            <tr>
-              <td>2. NISN</td>
-              <td>:</td>
-              <td id="modal-nisn"></td>
-            </tr>
-            <tr>
-              <td>3. Nama Peserta</td>
-              <td>:</td>
-              <td id="modal-nama"></td>
-            </tr>
-            <tr>
-              <td>4. Jenis Kelamin</td>
-              <td>:</td>
-              <td id="modal-jk"></td>
-            </tr>
-            <tr>
-              <td>5. Keterangan</td>
-              <td>:</td>
-              <td id="modal-keterangan"></td>
-            </tr>
-          </tbody>
-        </table>
-
-        <!-- Average Score -->
-        <div class="avg-score-card">
-          <p class="avg-score-label">Nilai</p>
-          <!-- <p class="avg-score-sublabel">(Rata-rata)</p> -->
-          <p class="avg-score-value" id="modal-rata">0</p>
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="modal-actions">
-          <button class="btn btn-tutup" onclick="closeModal()">
-            <i class="fas fa-times"></i> Tutup
-          </button>
-        </div>
-      </div>
+  <div class="modal" id="studentModal">
+    <div class="modal-content">
+      <h2 id="modalTitle">Tambah Siswa</h2>
+      <form id="studentForm">
+        <input type="hidden" id="studentId" />
+        <div class="form-group"><label for="noPeserta">No Peserta</label><input type="text" id="noPeserta" required /></div>
+        <div class="form-group"><label for="nisn">NISN</label><input type="text" id="nisn" required /></div>
+        <div class="form-group"><label for="nama">Nama</label><input type="text" id="nama" required /></div>
+        <div class="form-group"><label for="jk">JK</label><select id="jk" required><option value="Laki-laki">Laki‑laki</option><option value="Perempuan">Perempuan</option></select></div>
+        <div class="form-group"><label for="keterangan">Keterangan</label><select id="keterangan" required><option value="LULUS">LULUS</option><option value="TIDAK LULUS">TIDAK LULUS</option></select></div>
+        <div class="form-group"><label for="rataRata">Rata‑Rata</label><input type="number" step="0.01" id="rataRata" required /></div>
+        <button type="submit">Simpan</button>
+        <button type="button" id="btnClose">Batal</button>
+      </form>
     </div>
   </div>
 
-  <!-- ========== Error Modal ========== -->
-  <div id="error-modal" class="error-modal-overlay">
-    <div class="error-modal">
-      <div class="error-icon">
-        <i class="fas fa-exclamation-circle"></i>
-      </div>
-      <p class="error-title" id="error-title">Data Tidak Ditemukan</p>
-      <p class="error-message" id="error-message">Nomor peserta yang Anda masukkan tidak terdaftar. Silakan periksa
-        kembali.</p>
-      <button class="error-close-btn" onclick="closeErrorModal()">OK, Mengerti</button>
-    </div>
-  </div>
-
-
-
-  <!-- ========== Scripts ========== -->
-  <script src="./js/countdown.js"></script>
-  <script src="./js/app.js"></script>
+  <script type="module" src="admin.js"></script>
 </body>
-
 </html>
