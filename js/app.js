@@ -53,7 +53,7 @@ async function handleSearch(event) {
     document.getElementById('modal-no-peserta').textContent = student.no_peserta;
     document.getElementById('modal-nisn').textContent = student.nisn;
     document.getElementById('modal-nama').textContent = student.nama.toUpperCase();
-    document.getElementById('modal-jk').textContent = student.jk === 'L' ? 'Laki-laki' : 'Perempuan';
+    document.getElementById('modal-jk').textContent = student.jk === 'Laki-laki' ? 'Laki-laki' : 'Perempuan';
     document.getElementById('modal-keterangan').textContent = student.keterangan;
     document.getElementById('modal-rata').textContent = student.rata_rata.toFixed(1);
 
@@ -77,3 +77,28 @@ async function handleSearch(event) {
 }
 
 // Rest of the file remains unchanged (closeModal, error handling, exports)
+// Overlay click handlers for closing modals
+const resultModal = document.getElementById('result-modal');
+if (resultModal) {
+  resultModal.addEventListener('click', (e) => {
+    if (e.target === resultModal) closeModal();
+  });
+}
+const errorModalOverlay = document.getElementById('error-modal');
+if (errorModalOverlay) {
+  errorModalOverlay.addEventListener('click', (e) => {
+    if (e.target === errorModalOverlay) closeErrorModal();
+  });
+}
+
+// Close modal functions
+function closeModal() {
+  const modal = document.getElementById('result-modal');
+  if (modal) modal.classList.remove('active');
+}
+
+function closeErrorModal() {
+  const errModal = document.getElementById('error-modal');
+  if (errModal) errModal.classList.remove('active');
+}
+
